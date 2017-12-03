@@ -4,42 +4,54 @@
 #include <array>
 #include <algorithm>
 
-void getbulls(std::array<bool,4> code, std::array<bool,4>guess);
-int getcows(std::array<bool,4> code, std::array<bool,4>guess, int bulls);
+int getbulls(std::array<bool,9> code, std::array<bool,9>guess);
+int getcows(std::array<bool,9> code, std::array<bool,9>guess, int bulls);
+
+//lambda to print a container, saves on boilerplate
+auto const printcontainer = [](auto container){for(auto& i : container) std::cout << i;
+std::cout << '\n';};
 
 int gameloop()
 {
-    std::array<bool,4> code {false,false,true,true};
-    std::array<bool,4> guess;
+    std::cout << "Gamemode 1 Selected\n";
+    std::array<bool,9> code {0,0,1,1,0,0,0,0,0};
+    std::array<bool,9> guess;
+
+    std::array<bool,9> sortedcode;
+    auto sortcode = [](auto container)
+    {std::stable_sort(container.begin(),container.end()); return container;};
+    sortedcode = sortcode(code);
+
     std::string input;
     while(std::cin >> input)
     {
+        //clear guess and read in values
         guess.empty();
         int it = 0;
         for (auto& i : input){              //hack to convert str to arr of bool
             guess.at(it) = (i == '1');
             ++it;
         }
-        std::cout << "\nyour guess is\n";
-        for (auto i : guess)
-            std::cout << i;
-        std::cout << "\n";
+        //print guess
+        std::cout << "your guess is\n";
+        printcontainer(guess);
 
-        if (guess == code)
-        {
+        if (guess == code){
             std::cout << "You gussed correctly!" << std::endl;
             return 0;                                           //indicate success
         }
         else{
             std::cout << "Bulls: ";
-            getbulls(code,guess);
+            int bulls = getbulls(code,guess);
+            getcows(sortedcode, guess, bulls);
             std::cout << '\n';
         }
     }
+    std::cout << std::endl;
     return 0;
 }
 
-void getbulls(std::array<bool,4> code, std::array<bool,4>guess)
+int getbulls(std::array<bool,9> code, std::array<bool,9>guess)
 {
     auto bulls = 0;
     auto cit = code.begin();
@@ -50,24 +62,20 @@ void getbulls(std::array<bool,4> code, std::array<bool,4>guess)
         ++git;
         ++cit;
     }
-    std::cout << bulls;
-    getcows(code,guess,bulls);
+    std::cout << bulls << ' ';
+    return bulls;
 }
 
-int getcows(std::array<bool,4> code, std::array<bool,4> guess, int bulls)
+int getcows(std::array<bool,9> sortedcode, std::array<bool,9> guess, int bulls)
 {
     std::stable_sort(guess.begin(),guess.end());
-    std::stable_sort(code.begin(), code.end());
     std::cout << "\nsorted guess\n";
-    for (auto i : guess)
-        std::cout << i;
-    std::cout << "\nsorted code\n";
-    for (auto i : code)
-        std::cout << i;
-    std::cout << '\n';
+    printcontainer(guess);
+    std::cout << "sorted code\n";
+    printcontainer(sortedcode);
 
     auto tempcows = 0;
-    auto cit = code.begin();
+    auto cit = sortedcode.begin();
     auto git = guess.begin();
     while (git != guess.end()){
         if (*git == *cit)
@@ -78,19 +86,3 @@ int getcows(std::array<bool,4> code, std::array<bool,4> guess, int bulls)
     std::cout << "Cows: " << (tempcows-bulls);
     return tempcows;
 }
-
-/*
-int getcows(std::array<bool,4> code, std::array<bool,4>guess)
-{
-    auto cows = 0;
-    auto cit = code.begin();
-    auto git = guess.begin();
-    while (git != guess.end()){
-        if (*git != *cit)
-            ++cows;
-        ++git;
-        ++cit;
-    }
-    return cows;    
-}
-*/
