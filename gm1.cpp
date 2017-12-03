@@ -1,21 +1,25 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
+#include <algorithm>
 
-int getbulls(std::vector<bool> code, std::vector<bool>guess);
-int getcows(std::vector<bool> code, std::vector<bool>guess);
+void getbulls(std::array<bool,4> code, std::array<bool,4>guess);
+int getcows(std::array<bool,4> code, std::array<bool,4>guess, int bulls);
 
-
-int gameloop(){
-    std::vector<bool> code {true,true,false,false};
-    std::vector<bool> guess;
-    while(true)
+int gameloop()
+{
+    std::array<bool,4> code {false,false,true,true};
+    std::array<bool,4> guess;
+    std::string input;
+    while(std::cin >> input)
     {
-        std::string input;
-        std::cin >> input;
-        guess.clear(); //clear already existing vec on each iteration
-        for (auto i : input)
-            guess.push_back(i == '1');      //kind of a hack to convert string value to bool
+        guess.empty();
+        int it = 0;
+        for (auto& i : input){              //hack to convert str to arr of bool
+            guess.at(it) = (i == '1');
+            ++it;
+        }
         std::cout << "\nyour guess is\n";
         for (auto i : guess)
             std::cout << i;
@@ -24,16 +28,18 @@ int gameloop(){
         if (guess == code)
         {
             std::cout << "You gussed correctly!" << std::endl;
-            return 0; //indicate success
+            return 0;                                           //indicate success
         }
         else{
-            std::cout << "Bulls: " << getbulls(code,guess) << '\n';
-            std::cout << "Cows: " << getcows(code,guess) << '\n';
+            std::cout << "Bulls: ";
+            getbulls(code,guess);
+            std::cout << '\n';
         }
     }
+    return 0;
 }
 
-int getbulls(std::vector<bool> code, std::vector<bool>guess)
+void getbulls(std::array<bool,4> code, std::array<bool,4>guess)
 {
     auto bulls = 0;
     auto cit = code.begin();
@@ -44,10 +50,37 @@ int getbulls(std::vector<bool> code, std::vector<bool>guess)
         ++git;
         ++cit;
     }
-    return bulls;
+    std::cout << bulls;
+    getcows(code,guess,bulls);
 }
 
-int getcows(std::vector<bool> code, std::vector<bool>guess)
+int getcows(std::array<bool,4> code, std::array<bool,4> guess, int bulls)
+{
+    std::stable_sort(guess.begin(),guess.end());
+    std::stable_sort(code.begin(), code.end());
+    std::cout << "\nsorted guess\n";
+    for (auto i : guess)
+        std::cout << i;
+    std::cout << "\nsorted code\n";
+    for (auto i : code)
+        std::cout << i;
+    std::cout << '\n';
+
+    auto tempcows = 0;
+    auto cit = code.begin();
+    auto git = guess.begin();
+    while (git != guess.end()){
+        if (*git == *cit)
+            ++tempcows;
+        ++git;
+        ++cit;
+    }
+    std::cout << "Cows: " << (tempcows-bulls);
+    return tempcows;
+}
+
+/*
+int getcows(std::array<bool,4> code, std::array<bool,4>guess)
 {
     auto cows = 0;
     auto cit = code.begin();
@@ -60,4 +93,4 @@ int getcows(std::vector<bool> code, std::vector<bool>guess)
     }
     return cows;    
 }
-
+*/
