@@ -11,7 +11,7 @@ int getcows(std::array<bool,9> code, std::array<bool,9>guess, int bulls);
 auto const printcontainer = [](auto container){for(auto& i : container) std::cout << i;
 std::cout << '\n';};
 
-int gameloop()
+int gm1loop()
 {
     std::cout << "Gamemode 1 Selected\n";
     std::array<bool,9> code {0,0,1,1,0,0,0,0,0};

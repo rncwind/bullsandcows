@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 
-int gameloop();
+int gm1loop();
+int gm2loop();
 
 int main()
 {
@@ -10,8 +11,9 @@ int main()
     std::cin >> mode;
     switch(mode){
     case 1:
-        gameloop(); break;
+        gm1loop(); break;
     case 2:
+        gm2loop();
         break;
     }
     return 0;
