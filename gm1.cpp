@@ -58,7 +58,6 @@ int getbulls(const std::array<bool,4>& code, const std::array<bool,4>& guess, in
     return bulls;
 }
 
-
 int getcows(const std::array<bool,4>& sortedcode, const std::array<bool,4>& guess, const int bulls, int& cows){
     auto scit = sortedcode.begin();
     auto guessit = guess.begin();
