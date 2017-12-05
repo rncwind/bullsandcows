@@ -65,6 +65,7 @@ void bruteforce(std::array<bool,4> code)
     }
 }
 
+//gets the next guess from the list of valid guesses
 int getnextguess(std::map<int,bool>& guesses)
 {
     for(int i = 0; i < 16; ++i)
@@ -72,18 +73,18 @@ int getnextguess(std::map<int,bool>& guesses)
         if(guesses.at(i) == true)
             return i;
     }
-    //unsafe but shouldn't happen
     std::cout << "\n\nGETNEXTGUESS WENT WRONG!\n\n";
-    return -999;
+    return -1;
 }
 
+//invalidates guesses based on the previous guesses, and the amount of bulls in the previous guess
 void invalidateguesses(std::array<bool,4>& code, std::map<int,bool>& guesses, int bulls, int tempguess)
 {
     for(int i = 0; i < 16; ++i)
     {
         auto tbulls = 0;
         guesses.at(tempguess) = false;
-        if(getBulls(code,indexToCode(i),tbulls) != bulls)
+        if(getBulls(code,indexToCode(i),tbulls) < bulls)
             guesses.at(i) = false;
     }
 }
