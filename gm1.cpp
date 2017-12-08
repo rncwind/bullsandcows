@@ -7,7 +7,7 @@
 
 //function prototypes
 int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls);
-int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int bulls, int& cows);
+int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int& bulls, int& cows);
 
 //lambdas for reccurant boilerplate
 //names are self doccumenting, code on one line for style

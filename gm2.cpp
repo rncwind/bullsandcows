@@ -7,8 +7,8 @@
 
 std::array<bool,9> indexToCode(int i);
 int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls);
-int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int bulls, int& cows);
-void informed(std::array<bool,9> code, std::map<int,bool>& guesses);
+int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int& bulls, int& cows);
+void informed(std::array<bool,9> code, std::array<bool,512>& guesses);
 
 auto const printContainer = [](auto container){for(auto& i : container) std::cout << i;
 std::cout << '\n';};
@@ -19,7 +19,7 @@ auto sortCode = [](auto container)
 auto strToBoolArr = [](auto& container, std::string input)
 {int it = 0; for (auto& i: input){container.at(it) = (i == '1'); ++it;}};
 
-void fillmap(std::map<int,bool>& guesses)
+void fillmap(std::array<bool,512>& guesses)
 {
     for (auto i = 0; i < 512; ++i)
     {
@@ -29,14 +29,13 @@ void fillmap(std::map<int,bool>& guesses)
 
 int gm2loop()
 {
-    std::map<int,bool> guesses;
-    fillmap(guesses);
+    std::array<bool,512> guesses;
     std::string input;
     std::array<bool,9> code;
     std::cout << "Input your code\n>";
     std::cin >> input;
     strToBoolArr(code,input);
-    std::cout << "\n\nInformed Values\n";
+    std::cout << "\nInformed Values\n";
     informed(code, guesses);
     return 0;
 }
@@ -49,19 +48,18 @@ std::array<bool,9> indexToCode(int i){
 }
 
 //gets the next guess from the list of valid guesses
-int getnextguess(std::map<int,bool>& guesses)
+int getnextguess(std::array<bool,512>& guesses)
 {
     for(int i = 0; i < 512; ++i)
     {
         if(guesses.at(i) == true)
             return i;
     }
-    std::cout << "\n\nGETNEXTGUESS WENT WRONG!\n\n";
-    return -1;
+    return 0;
 }
 
 //invalidates guesses based on the previous guesses, and the amount of bulls in the previous guess
-void invalidateguesses(std::array<bool,9>& code, std::map<int,bool>& guesses, int bulls, int tempguess)
+void invalidateguesses(std::array<bool,9>& code, std::array<bool,512>& guesses, int bulls, int tempguess)
 {
     for(int i = 0; i < 512; ++i)
     {
@@ -72,7 +70,7 @@ void invalidateguesses(std::array<bool,9>& code, std::map<int,bool>& guesses, in
     }
 }
 
-void informed(std::array<bool,9> code, std::map<int,bool>& guesses)
+void informed(std::array<bool,9> code, std::array<bool,512>& guesses)
 {
     int tempguess = 0;
     std::array<bool,9> guess = {0,0,1,1,0,0,1,1,0};
@@ -82,9 +80,13 @@ void informed(std::array<bool,9> code, std::map<int,bool>& guesses)
         auto cows = 0;
         tempguess = getnextguess(guesses);
         guess = indexToCode(tempguess);
-        std::cout << "Bulls: " << getBulls(code,guess,bulls);
+        std::cout << "\nBulls: " << getBulls(code,guess,bulls);
         std::cout << "\nCows: " << getCows(sortCode(code),guess,bulls,cows);
+        if (bulls == 9)
+        {
+            break;
+        }
         invalidateguesses(code,guesses,bulls, tempguess);
     }
-    std::cout << "\n\nCode found!\n\n";
+    std::cout << "\nCode found!\n";
 }
