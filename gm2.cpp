@@ -5,11 +5,10 @@
 #include <algorithm>
 #include <map>
 
-std::array<bool,4> indexToCode(int i);
-int getBulls(const std::array<bool,4>& code, const std::array<bool,4>& guess, int& bulls);
-int getCows(const std::array<bool,4>& sortedcode, const std::array<bool,4>& guess, const int bulls, int& cows);
-void bruteforce(std::array<bool,4> code);
-void informed(std::array<bool,4> code, std::map<int,bool>& guesses);
+std::array<bool,9> indexToCode(int i);
+int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls);
+int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int bulls, int& cows);
+void informed(std::array<bool,9> code, std::map<int,bool>& guesses);
 
 auto const printContainer = [](auto container){for(auto& i : container) std::cout << i;
 std::cout << '\n';};
@@ -22,7 +21,7 @@ auto strToBoolArr = [](auto& container, std::string input)
 
 void fillmap(std::map<int,bool>& guesses)
 {
-    for (auto i = 0; i < 16; ++i)
+    for (auto i = 0; i < 512; ++i)
     {
         guesses[i] = true;
     }
@@ -33,42 +32,26 @@ int gm2loop()
     std::map<int,bool> guesses;
     fillmap(guesses);
     std::string input;
-    std::array<bool,4> code;
+    std::array<bool,9> code;
     std::cout << "Input your code\n>";
     std::cin >> input;
     strToBoolArr(code,input);
-    std::cout << "Bruteforce\n";
-    bruteforce(code);
     std::cout << "\n\nInformed Values\n";
     informed(code, guesses);
     return 0;
 }
 
-std::array<bool,4> indexToCode(int i){
+std::array<bool,9> indexToCode(int i){
     std::string codestr = std::bitset<4>(i).to_string();
-    std::array<bool,4> code;
+    std::array<bool,9> code;
     strToBoolArr(code,codestr);
     return code;
-}
-
-void bruteforce(std::array<bool,4> code)
-{
-    for (int i = 0; i < 15; ++i)
-    {
-        if (indexToCode(i) == code)
-        {
-            std::cout << "Your code is: ";
-            printContainer(indexToCode(i));
-            std::cout << "found after " << i << " Iterations";
-            break;
-        }
-    }
 }
 
 //gets the next guess from the list of valid guesses
 int getnextguess(std::map<int,bool>& guesses)
 {
-    for(int i = 0; i < 16; ++i)
+    for(int i = 0; i < 512; ++i)
     {
         if(guesses.at(i) == true)
             return i;
@@ -78,9 +61,9 @@ int getnextguess(std::map<int,bool>& guesses)
 }
 
 //invalidates guesses based on the previous guesses, and the amount of bulls in the previous guess
-void invalidateguesses(std::array<bool,4>& code, std::map<int,bool>& guesses, int bulls, int tempguess)
+void invalidateguesses(std::array<bool,9>& code, std::map<int,bool>& guesses, int bulls, int tempguess)
 {
-    for(int i = 0; i < 16; ++i)
+    for(int i = 0; i < 512; ++i)
     {
         auto tbulls = 0;
         guesses.at(tempguess) = false;
@@ -89,10 +72,10 @@ void invalidateguesses(std::array<bool,4>& code, std::map<int,bool>& guesses, in
     }
 }
 
-void informed(std::array<bool,4> code, std::map<int,bool>& guesses)
+void informed(std::array<bool,9> code, std::map<int,bool>& guesses)
 {
     int tempguess = 0;
-    std::array<bool,4> guess = {0,0,1,1};
+    std::array<bool,9> guess = {0,0,1,1,0,0,1,1,0};
     while (guess != code)
     {
         auto bulls = 0;

@@ -3,9 +3,11 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <random>
+#include <functional>
 
-int getBulls(const std::array<bool,4>& code, const std::array<bool,4>& guess, int& bulls);
-int getCows(const std::array<bool,4>& sortedcode, const std::array<bool,4>& guess, const int bulls, int& cows);
+int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls);
+int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int bulls, int& cows);
 
 auto const printContainer = [](auto container){for(auto& i : container) std::cout << i;
 std::cout << '\n';};
@@ -16,12 +18,21 @@ auto sortCode = [](auto container)
 auto strToBoolArr = [](auto& container, std::string input)
 {int it = 0; for (auto& i: input){container.at(it) = (i == '1'); ++it;}};
 
+void generateCode(std::array<bool,9>& code)
+{
+    std::random_device rdev;
+    std::uniform_int_distribution<int> distrib(0,1);
+    for (int it = 0; it < 9; ++it)
+           code.at(it) = distrib(rdev);
+}
+
+
 int gm1loop()
 {
-    std::array<bool,4> code {1,0,0,0};
-    std::array<bool,4> guess;
-
-    std::array<bool,4> sortedcode;
+    std::array<bool,9> code;
+    generateCode(code);
+    std::array<bool,9> guess;
+    std::array<bool,9> sortedcode;
     sortedcode = sortCode(code);
     
     std::string input;
@@ -45,7 +56,7 @@ int gm1loop()
     return 0;
 }
 
-int getBulls(const std::array<bool,4>& code, const std::array<bool,4>& guess, int& bulls)
+int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls)
 {
     auto cit = code.begin();
     auto git = guess.begin();
@@ -58,7 +69,7 @@ int getBulls(const std::array<bool,4>& code, const std::array<bool,4>& guess, in
     return bulls;
 }
 
-int getCows(const std::array<bool,4>& sortedcode, const std::array<bool,4>& guess, const int bulls, int& cows){
+int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int bulls, int& cows){
     auto scit = sortedcode.begin();
     auto guessit = guess.begin();
     while (guessit != guess.end()){
