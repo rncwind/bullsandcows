@@ -18,6 +18,7 @@ auto const printContainer = [](const auto& container)
 auto sortCode = [](auto container)
 {std::stable_sort(container.begin(),container.end()); return container;};
 
+//takes in a string and an array, convers string to array values
 auto strToBoolArr = [](auto& container, const std::string& input)
 {int it = 0; for (auto& i: input){container.at(it) = (i == '1'); ++it;}};
 
@@ -34,6 +35,7 @@ void generateCode(std::array<bool,9>& code)
 }
 
 //main game loop and control logic
+//lots of pretty printing and other magic, pretty boring
 int gm1loop()
 {
     std::array<bool,9> code;
@@ -41,16 +43,16 @@ int gm1loop()
     std::array<bool,9> guess;
     std::array<bool,9> sortedcode;
     sortedcode = sortCode(code);
-    
     int attempts = 0;
     std::string input;
+    auto bulls = 0;
+    auto cows = 0;
     while (attempts < 7)
     {
+        bulls = 0;
+        cows = 0;
         std::cout << "Attempt " << attempts+1 << "/7\n>";
         std::cin >> input;
-        auto bulls = 0;
-        auto cows = 0;
-        guess.empty();
         strToBoolArr(guess,input);
         std::cout << "Your guess is: ";
         printContainer(guess);
@@ -61,8 +63,8 @@ int gm1loop()
         else{
             std::cout << "Bulls: " << getBulls(code,guess,bulls) << '\n';
             std::cout << "Cows: " << getCows(sortedcode,guess,bulls,cows) << '\n';
-            ++attempts;
         }
+        ++attempts;
     }
     std::cout << "You ran out of attempts! Game over!\n";
     std::cout.flush();
@@ -85,8 +87,9 @@ int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, in
 }
 
 //simmilar to getCows, however operating on a sorted copy of the code to break.
-//if there are more matches found in this version, subtracts the amount of bulls from the cows
-//to provide an accurate figure. cows passed in for genericism, bulls passed in as a copy
+//if there are more matches found in this version, subtracts the amount of bulls from the cows to
+//provide an accurate figure.
+//cows passed in for genericism, bulls passed in as a copy
 int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int& bulls, int& cows){
     auto scit = sortedcode.begin();
     auto guessit = guess.begin();
