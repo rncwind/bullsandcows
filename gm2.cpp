@@ -7,8 +7,7 @@
 
 std::array<bool,9> indexToCode(int i);
 int getBulls(const std::array<bool,9>& code, const std::array<bool,9>& guess, int& bulls);
-int getCows(const std::array<bool,9>& sortedcode, const std::array<bool,9>& guess, const int& bulls, int& cows);
-void informed(std::array<bool,9> code, std::array<bool,512>& guesses);
+void informed(std::array<bool,9>& code, std::array<bool,512>& guesses);
 
 auto const printContainer = [](auto container){for(auto& i : container) std::cout << i;
 std::cout << '\n';};
@@ -19,14 +18,6 @@ auto sortCode = [](auto container)
 auto strToBoolArr = [](auto& container, std::string input)
 {int it = 0; for (auto& i: input){container.at(it) = (i == '1'); ++it;}};
 
-void fillmap(std::array<bool,512>& guesses)
-{
-    for (auto i = 0; i < 512; ++i)
-    {
-        guesses[i] = true;
-    }
-}
-
 int gm2loop()
 {
     std::array<bool,512> guesses;
@@ -34,59 +25,69 @@ int gm2loop()
     std::array<bool,9> code;
     std::cout << "Input your code\n>";
     std::cin >> input;
+    guesses.fill(true);
     strToBoolArr(code,input);
-    std::cout << "\nInformed Values\n";
     informed(code, guesses);
     return 0;
 }
 
 std::array<bool,9> indexToCode(int i){
-    std::string codestr = std::bitset<4>(i).to_string();
+    std::string codestr = std::bitset<9>(i).to_string();
     std::array<bool,9> code;
     strToBoolArr(code,codestr);
     return code;
 }
 
 //gets the next guess from the list of valid guesses
-int getnextguess(std::array<bool,512>& guesses)
+int getnextguess(const std::array<bool,512>& guesses)
 {
     for(int i = 0; i < 512; ++i)
     {
         if(guesses.at(i) == true)
             return i;
     }
+    std::cout << "Something went wrong";
     return 0;
 }
 
 //invalidates guesses based on the previous guesses, and the amount of bulls in the previous guess
 void invalidateguesses(std::array<bool,9>& code, std::array<bool,512>& guesses, int bulls, int tempguess)
 {
+    auto tbulls = 0;
+    auto tcows = 0;
+    guesses.at(tempguess) = false;
     for(int i = 0; i < 512; ++i)
     {
-        auto tbulls = 0;
-        guesses.at(tempguess) = false;
-        if(getBulls(code,indexToCode(i),tbulls) < bulls)
+        tbulls = 0;
+        tcows = 0;
+        getBulls(code,indexToCode(i),tbulls);
+        if(tbulls <= bulls)
             guesses.at(i) = false;
     }
 }
 
-void informed(std::array<bool,9> code, std::array<bool,512>& guesses)
+void informed(std::array<bool,9>& code,std::array<bool,512>& guesses)
 {
+    int attempts = 0;
     int tempguess = 0;
-    std::array<bool,9> guess = {0,0,1,1,0,0,1,1,0};
-    while (guess != code)
+    std::array<bool,9> guess = {0,0,0,0,0,0,0,0,0};
+    while (attempts < 7)
     {
         auto bulls = 0;
-        auto cows = 0;
         tempguess = getnextguess(guesses);
         guess = indexToCode(tempguess);
-        std::cout << "\nBulls: " << getBulls(code,guess,bulls);
-        std::cout << "\nCows: " << getCows(sortCode(code),guess,bulls,cows);
+        std::cout << "Attempt " << attempts+1 << "/7 guess is: ";
+        printContainer(guess);
+        std::cout << "Bulls: " << getBulls(code,guess,bulls);
+        std::cout << '\n';
         if (bulls == 9)
         {
+            std::cout << "\nCode found!\n";
+            std::cout << "Your code was ";
+            printContainer(code); 
             break;
         }
-        invalidateguesses(code,guesses,bulls, tempguess);
+        invalidateguesses(code,guesses,bulls,tempguess);
+        ++attempts;
     }
-    std::cout << "\nCode found!\n";
 }

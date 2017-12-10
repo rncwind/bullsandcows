@@ -11,5 +11,8 @@ debug:
 release:
 	$(COMPILER) $(FLAGS) -O3 $(SOURCE) -o r_bandc.out
 
+gdb:
+	g++ -std=c++17 -g $(SOURCE) -o d_bandc.out
+
 clean:
 	rm *.out

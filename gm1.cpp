@@ -42,9 +42,12 @@ int gm1loop()
     std::array<bool,9> sortedcode;
     sortedcode = sortCode(code);
     
+    int attempts = 0;
     std::string input;
-    while (std::cin >> input)
+    while (attempts < 7)
     {
+        std::cout << "Attempt " << attempts+1 << "/7\n>";
+        std::cin >> input;
         auto bulls = 0;
         auto cows = 0;
         guess.empty();
@@ -57,10 +60,13 @@ int gm1loop()
         }
         else{
             std::cout << "Bulls: " << getBulls(code,guess,bulls) << '\n';
-            std::cout << "\nCows: " << getCows(sortedcode,guess,bulls,cows) << '\n';
+            std::cout << "Cows: " << getCows(sortedcode,guess,bulls,cows) << '\n';
+            ++attempts;
         }
     }
-    return 0;
+    std::cout << "You ran out of attempts! Game over!\n";
+    std::cout.flush();
+    return 1;
 }
 
 //iterate through the contents of the guess and the code comparing values symmetrically
